@@ -178,12 +178,7 @@ int fitsBits(int x, int n) {
 int sign(int x) {
   int num_acc;
   int sig = x >> 31;
-  num_acc = x >> 16 | x;
-  num_acc = x >> 8 | x;
-  num_acc = x >> 4 | x;
-  num_acc = x >> 2 | x;
-  num_acc = x >> 1 | x;
-  return (sig & -1) + (~sig & num_acc);
+  return (sig & (1<<31>>31)) + (~sig & num_acc);
 }
 /* 
  * getByte - Extract byte n from word x
@@ -194,7 +189,7 @@ int sign(int x) {
  *   Rating: 2
  */
 int getByte(int x, int n) {
-  return 2;
+  return x & (0xff << (8 << n));
 }
 // Rating: 3
 /* 
@@ -217,7 +212,11 @@ int logicalShift(int x, int n) {
  *   Rating: 3
  */
 int addOK(int x, int y) {
-  return 2;
+  int add_res = x + y;
+  int sign_x = x >> 31 & 0x01;
+  int sign_y = y >> 31 & 0x01;
+  int add_sign = add_res >> 31 & 0x01;
+  return 1;
 }
 // Rating: 4
 /* 
@@ -239,7 +238,9 @@ int bang(int x) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
-  return 2;
+  int tmp;
+  tmp = !x << 31 >> 31;
+  return (tmp & z) + (~tmp & y);
 }
 // Extra Credit: Rating: 4
 /*
@@ -251,5 +252,12 @@ int conditional(int x, int y, int z) {
  *   Rating: 4
  */
 int isPower2(int x) {
-  return 2;
+  int total;
+  int sign = x >> 31;
+  total = (x & 0x55555555) + ((x >> 1) & 0x55555555);
+  total = (total & 0x33333333) + ((total >> 2) & 0x33333333);
+  total = (total & 0xf0f0f0f0) + ((total >> 4) & 0xf0f0f0f0);
+  total = (total & 0xff00ff00) + ((total >> 8) & 0xff00ff00);
+  total = (total & 0xffff0000) + ((total >> 16) & 0xffff0000);
+  return ~sign & !(total & 0x1e) & (total & 0x01);
 }

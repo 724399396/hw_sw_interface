@@ -2,7 +2,7 @@
  * CSE 351 HW1 (Data Lab - Pointers)
  *
  * <Please put your name and userid here>
- *
+ * wei.li
  * pointer.c - Source file with your solutions to the Lab.
  *          This is the file you will hand in to your instructor.
  *
@@ -85,8 +85,9 @@ int intSize() {
   int * intPtr1;
   int * intPtr2;
   // TODO: Write code to compute size of an integer.
-
-  return 2;
+  intPtr1 = intArray;
+  intPtr2 = &intArray[1];
+  return (long int)intPtr2 - (long int)intPtr1;
 }
 
 /*
@@ -97,8 +98,9 @@ int doubleSize() {
   double * doubPtr1;
   double * doubPtr2;
   // TODO: Write code to compute size of a double.
-
-  return 2;
+  doubPtr1 = doubArray;
+  doubPtr2 = doubArray + 1;
+  return (long int)doubPtr2 - (long int)doubPtr1;
 }
 
 /*
@@ -109,8 +111,9 @@ int pointerSize() {
   double ** ptrPtr1;
   double ** ptrPtr2;
   // TODO: Write code to compute size of a pointer.
-
-  return 2;
+  ptrPtr1 = ptrArray;
+  ptrPtr2 = ptrArray + 1;
+  return (long int)ptrPtr2 - (long int)ptrPtr1;
 }
 
 /*
@@ -123,7 +126,7 @@ int changeValue() {
   int * intPtr2;
   // TODO: Write code to change value of intArray[5] to 351 using only
   //       intPtr1 and the + operator.
-
+  *(intPtr1 + 5) = 351;
   return intArray[5];
 }
 
@@ -135,8 +138,7 @@ int changeValue() {
  * Operators / and % and loops are NOT allowed.
  */
 int withinSameBlock(int * ptr1, int * ptr2) {
-  // TODO
-  return 2;
+  return ptr1 == ptr2;
 }
 
 /*
@@ -144,7 +146,7 @@ int withinSameBlock(int * ptr1, int * ptr2) {
  * 0 otherwise.
  */
 int withinArray(int * intArray, int size, int * ptr) {
-  // TODO
+  
   return 2;
 }
 /*
