@@ -158,14 +158,8 @@ int thirdBits(void) {
  *   Rating: 2
  */
 int fitsBits(int x, int n) {
-  int t_max;
-  int t_min;
-  int sign;
-  sign = x >> 31;
-  t_min = 1 << n >> 1;
-  t_max = t_min >> 1;
-
-  return 2;
+  int c = ~n + 33;
+  return !(((x<<c)>>c)^x);
 }
 /* 
  * sign - return 1 if positive, 0 if zero, and -1 if negative
@@ -176,9 +170,8 @@ int fitsBits(int x, int n) {
  *  Rating: 2
  */
 int sign(int x) {
-  int num_acc;
   int sig = x >> 31;
-  return (sig & (1<<31>>31)) + (~sig & num_acc);
+  return (sig & ~0) + (!sig & !((!x) & 1));
 }
 /* 
  * getByte - Extract byte n from word x
@@ -189,7 +182,7 @@ int sign(int x) {
  *   Rating: 2
  */
 int getByte(int x, int n) {
-  return x & (0xff << (8 << n));
+  return (x >> (n << 3)) & 0xff;
 }
 // Rating: 3
 /* 
@@ -201,7 +194,12 @@ int getByte(int x, int n) {
  *   Rating: 3 
  */
 int logicalShift(int x, int n) {
-  return 2;
+  int mask;
+  int mask2;
+  int arl = x >> n;
+  mask = ~((~0) << (~n + 33));
+  mask2 = (!n) << 31 >> 31;
+  return  (mask2 & arl) + ((~mask2) & arl & mask); 
 }
 /* 
  * addOK - Determine if can compute x+y without overflow
@@ -212,11 +210,12 @@ int logicalShift(int x, int n) {
  *   Rating: 3
  */
 int addOK(int x, int y) {
-  int add_res = x + y;
-  int sign_x = x >> 31 & 0x01;
-  int sign_y = y >> 31 & 0x01;
-  int add_sign = add_res >> 31 & 0x01;
-  return 1;
+  int sign_1 = x >> 31;
+  int sign_2 = y >> 31;
+  int sign_3 = (x + y) >> 31;
+  int same_sign = !(sign_1 ^ sign_2);
+  int add_sum_sign = !(sign_1 ^ sign_3);
+  return (!same_sign & 1) + (same_sign & add_sum_sign); 
 }
 // Rating: 4
 /* 
@@ -227,7 +226,7 @@ int addOK(int x, int y) {
  *   Rating: 4 
  */
 int bang(int x) {
-  return 2;
+  return x << 33 >> 33 ^ x;
 }
 // Extra Credit: Rating: 3
 /* 

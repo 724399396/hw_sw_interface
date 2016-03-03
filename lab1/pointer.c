@@ -138,7 +138,9 @@ int changeValue() {
  * Operators / and % and loops are NOT allowed.
  */
 int withinSameBlock(int * ptr1, int * ptr2) {
-  return ptr1 == ptr2;
+  long int addr1 = (long int)ptr1;
+  long int addr2 = (long int)ptr2;
+  return (addr1 >> 6) == addr2 || addr1 == (addr2 >> 6);
 }
 
 /*
