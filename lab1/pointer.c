@@ -140,16 +140,18 @@ int changeValue() {
 int withinSameBlock(int * ptr1, int * ptr2) {
   long int addr1 = (long int)ptr1;
   long int addr2 = (long int)ptr2;
-  return (addr1 >> 6) == addr2 || addr1 == (addr2 >> 6);
+  return (addr1 >> 6) == (addr2 >> 6);
 }
 
 /*
  * Return 1 if ptr points to an element within the specified intArray,
  * 0 otherwise.
  */
-int withinArray(int * intArray, int size, int * ptr) {
-  
-  return 2;
+int withinArray(int * intArray, int size, int * ptr) { 
+  int boo_1 = ((ptr - intArray) >> 2) <= size;
+  int boo_2 = !(((ptr - intArray) & 0x11) ^ 0);
+  int boo_3 = ptr >= intArray;
+  return boo_1 & !boo_2 & boo_3;
 }
 /*
  * Return x with the n bits that begin at position p inverted (i.e.,
@@ -157,6 +159,8 @@ int withinArray(int * intArray, int size, int * ptr) {
  * the indices of x to begin with the low-order bit numbered as 0.
  */
 int invert(int x, int p, int n) {
-  // TODO
-  return 2;
+  int high = ~0 << (p + n);
+  int middl = ~high >> p << p;
+  int low = ~(~0 << p);
+  return (x & high) + (~x & middl) + (x & low);
 }

@@ -226,7 +226,12 @@ int addOK(int x, int y) {
  *   Rating: 4 
  */
 int bang(int x) {
-  return x << 33 >> 33 ^ x;
+  x = x >> 16 | x;
+  x = x >> 8 | x;
+  x = x >> 4 | x;
+  x = x >> 2 | x;
+  x = x >> 1 | x;
+  return (x + 1)&1;
 }
 // Extra Credit: Rating: 3
 /* 
@@ -251,12 +256,5 @@ int conditional(int x, int y, int z) {
  *   Rating: 4
  */
 int isPower2(int x) {
-  int total;
-  int sign = x >> 31;
-  total = (x & 0x55555555) + ((x >> 1) & 0x55555555);
-  total = (total & 0x33333333) + ((total >> 2) & 0x33333333);
-  total = (total & 0xf0f0f0f0) + ((total >> 4) & 0xf0f0f0f0);
-  total = (total & 0xff00ff00) + ((total >> 8) & 0xff00ff00);
-  total = (total & 0xffff0000) + ((total >> 16) & 0xffff0000);
-  return ~sign & !(total & 0x1e) & (total & 0x01);
+  return !(((~x + 1) ^ x) ^ (~0 << 0/* (log(n) - 1 )*/));
 }
