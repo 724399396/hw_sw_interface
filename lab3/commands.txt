@@ -4,12 +4,12 @@ b *0x0000000000400da4
 b *0x0000000000400da8
 b *0x0000000000400db1
 r -u 11131328 < smoke.bytes
-x /64b $rsp
+x /64xb $rsp
 c
-x /64b $rsp
+x /64xb $rsp
 c
-x /64b $rsp
+x /64xb $rsp
 c
-x /64b $rsp
+x /64xb $rsp
 c
-x /64b $rsp
+x /64xb $rsp
