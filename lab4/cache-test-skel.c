@@ -39,8 +39,18 @@ mystery3:
 */
 int get_block_size(void) {
   /* YOUR CODE GOES HERE */
-
-  return -1;
+  cache_init(0,0);
+  int tmp[1];
+  addr_t ptr = (addr_t)&tmp;
+  int size = 0;
+  flush_cache();
+  bool_t get;
+  access_cache(ptr);
+  do {
+    size++;
+    get = access_cache(ptr+size);
+  } while (get);
+  return size;
 }
 
 /*
@@ -48,8 +58,19 @@ int get_block_size(void) {
 */
 int get_cache_size(int size) {
   /* YOUR CODE GOES HERE */
-
-  return -1;
+  flush_cache();
+  int tmp[1];
+  addr_t ptr = (addr_t)&tmp;
+  int block_num = 0;
+  bool_t exist = access_cache(ptr);
+  printf("%d\n", exist);
+  do {
+    block_num++;
+    printf("%ull %d\n",(ptr+block_num), exist);
+    exist = access_cache(ptr);
+    access_cache(ptr+block_num);
+  } while (exist);
+  return block_num;
 }
 
 /*

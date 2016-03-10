@@ -1,0 +1,23 @@
+b *0x0000000000400da0
+b *0x0000000000400da1
+b *0x0000000000400da4
+b *0x0000000000400da8
+b *0x0000000000400db1
+r -u 11131328 < fizz.bytes
+x /64xb $rsp
+c
+x /64xb $rsp
+c
+x /64xb $rsp
+c
+x /64xb $rsp
+c
+x /64xb $rsp
+b *0x0000000000401070
+b *0x0000000000401083
+c
+x /64xb $rsp
+c
+x /64xb $rsp
+x /g ($rip + 0x201296)
+p /x $rsi
