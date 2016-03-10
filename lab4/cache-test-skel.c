@@ -39,11 +39,9 @@ mystery3:
 */
 int get_block_size(void) {
   /* YOUR CODE GOES HERE */
-  cache_init(0,0);
-  int tmp[1];
-  addr_t ptr = (addr_t)&tmp;
-  int size = 0;
   flush_cache();
+  addr_t ptr = 0x1374310000000000;
+  int size = 0;
   bool_t get;
   access_cache(ptr);
   do {
@@ -58,19 +56,21 @@ int get_block_size(void) {
 */
 int get_cache_size(int size) {
   /* YOUR CODE GOES HERE */
-  flush_cache();
-  int tmp[1];
-  addr_t ptr = (addr_t)&tmp;
-  int block_num = 0;
-  bool_t exist = access_cache(ptr);
-  printf("%d\n", exist);
-  do {
-    block_num++;
-    printf("%ull %d\n",(ptr+block_num), exist);
-    exist = access_cache(ptr);
-    access_cache(ptr+block_num);
-  } while (exist);
-  return block_num;
+  addr_t ptr = 0x1374310000000000;
+  unsigned long long block_num = 0;
+  while (1) {
+    flush_cache();
+    unsigned long long i = 0;
+    for(; i <= block_num; i++) {
+      access_cache(ptr+i);
+    }
+    if (access_cache(ptr)) {
+	block_num++;
+    } else {
+	break;
+    }
+  }
+  return block_num * get_block_size();
 }
 
 /*
@@ -78,8 +78,23 @@ int get_cache_size(int size) {
 */
 int get_cache_assoc(int size) {
   /* YOUR CODE GOES HERE */
-
-  return -1;
+  int block_size = get_block_size();
+  int cache_size = get_cache_size(0);
+  int assoc = 1;
+  int step_size = cache_size / block_size;
+  addr_t ptr =  0x1374310000000000;
+  while(1) {
+    flush_cache();
+    int step;
+    for(step = 0; step <= assoc; step++)
+      access_cache(ptr+step*step_size);
+    if(access_cache(ptr)) {
+      assoc++;
+    } else {
+      break;
+    }
+  }
+  return assoc;
 }
 
 //// DO NOT CHANGE ANYTHING BELOW THIS POINT
