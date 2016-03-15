@@ -321,6 +321,7 @@ int mm_init () {
 void* mm_malloc (size_t size) {
   size_t reqSize;
   BlockInfo * ptrFreeBlock = NULL;
+  BlockInfo * ptrNextBlock = NULL;
   size_t blockSize;
   size_t precedingBlockUseTag;
 
@@ -345,7 +346,22 @@ void* mm_malloc (size_t size) {
   // Implement mm_malloc.  You can change or remove any of the above
   // code.  It is included as a suggestion of where to start.
   // You will want to replace this return statement...
-  return NULL; }
+  ptrFreeBlock = (BlockInfo*)searchFreeList(reqSize);
+  examine_heap();
+  if (ptrFreeBlock == NULL) {
+    requestMoreSpace(reqSize);
+    ptrFreeBlock = (BlockInfo*)searchFreeList(reqSize);
+    if(ptrFreeBlock == NULL) {
+      return NULL;
+    }
+  }
+  blockSize = SIZE(ptrFreeBlock->sizeAndTags);
+  ptrFreeBlock->sizeAndTags = blockSize | TAG_USED | (ptrFreeBlock->sizeAndTags | TAG_PRECEDING_USED);
+  ptrNextBlock = (BlockInfo*)POINTER_ADD(ptrFreeBlock,reqSize);
+  ptrNextBlock->sizeAndTags = ptrNextBlock->sizeAndTags | TAG_PRECEDING_USED;
+  removeFreeBlock(ptrFreeBlock);
+  return POINTER_ADD(ptrFreeBlock,8);
+}
 
 /* Free the block referenced by ptr. */
 void mm_free (void *ptr) {
@@ -355,11 +371,16 @@ void mm_free (void *ptr) {
 
   // Implement mm_free.  You can change or remove the declaraions
   // above.  They are included as minor hints.
-
+  blockInfo = (BlockInfo*)POINTER_SUB(ptr, 8);
+  payloadSize = SIZE(blockInfo->sizeAndTags);
+  followingBlock = (BlockInfo*)POINTER_ADD(ptr, payloadSize - 1);
+  blockInfo->sizeAndTags = blockInfo->sizeAndTags & ~TAG_USED;
+  followingBlock->sizeAndTags = followingBlock->sizeAndTags & ~TAG_PRECEDING_USED;
+  insertFreeBlock(blockInfo);
 }
 
 /* Print the heap by iterating through it as an implicit free list. */
-static void examine_heap() {
+void examine_heap() {
   BlockInfo *block;
 
   fprintf(stderr, "FREE_LIST_HEAD: %p\n", (void *)FREE_LIST_HEAD);
